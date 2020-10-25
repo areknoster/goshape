@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/goshape.iml" filepath="$PROJECT_DIR$/.idea/goshape.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../goshape/.idea/goshape.iml" filepath="$PROJECT_DIR$/../goshape/.idea/goshape.iml" />
     </modules>
   </component>
 </project>
