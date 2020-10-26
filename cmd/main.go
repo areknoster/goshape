@@ -6,14 +6,12 @@ import (
 	"fyne.io/fyne/layout"
 	"github.com/sirupsen/logrus"
 
-	"goshape"
+	"goshape/pkg/ui"
 )
 
 type Config struct{
 	title string
 	boardSize fyne.Size
-
-
 }
 
 var defaultCfg = Config{
@@ -26,9 +24,10 @@ func main(){
 	cfg := defaultCfg
 	fyneApp := fyneapp.New()
 	window :=fyneApp.NewWindow(cfg.title)
+	plane := NewPlane(defaultCfg.boardSize)
 
-	plane := goshape.NewPlane(defaultCfg.boardSize)
-	menu := goshape.NewMenu(goshape.NewModesMap(plane), plane.SetMode)
+	menu, setActiveEditMenu := ui.NewMenu(plane)
+	plane.HandleSelect = setActiveEditMenu
 
 	container := fyne.NewContainerWithLayout(layout.NewBorderLayout(nil, nil, menu, nil), menu, plane )
 	window.SetContent(container)

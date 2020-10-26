@@ -4,7 +4,7 @@ import (
 	"image/color"
 )
 
-func colorToRGBA(col color.Color) color.RGBA{
+func ColorToRGBA(col color.Color) color.RGBA{
 	r, g, b, a := col.RGBA()
 	return color.RGBA{
 		R: uint8(r),

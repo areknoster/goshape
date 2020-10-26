@@ -1,31 +1,23 @@
 package geom
 
+import "math"
+
 type Point struct {
 	X, Y float64
 }
 
-type Vertex Point
-type Vector Point
-
-func NormPoint(px, py, w, h int) Point {
-	return Point{
-		X: float64(px)/float64(w),
-		Y: 1.0 - float64(py)/float64(h),
-	}
+type Vector struct {
+	X, Y float64
 }
 
-func DenormPoint(p Point, w,h int) (PixelPoint){
-	return PixelPoint{int(float64(w) * p.X), int(float64(w) *(1.0 - p.Y))}
+func (v Vector) SqNorm() float64 {
+	return v.X*v.X + v.Y*v.Y
 }
 
-func MoveByVector(v Vertex, vec Vector) Vertex {
-	return Vertex{
-		X: v.X + vec.X,
-		Y: v.Y + vec.Y,
-	}
+func (v Vector) Length() float64 {
+	return math.Sqrt(v.SqNorm())
 }
 
-type PixelPoint struct {
-	X, Y int
+func MoveByVec(pp, v Pixel) Pixel {
+	return Pixel{pp.X + v.X, pp.Y + v.Y}
 }
-

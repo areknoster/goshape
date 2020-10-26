@@ -1,16 +1,14 @@
-package goshape
+package render
 
 import (
-	"github.com/sirupsen/logrus"
-
 	"goshape/pkg/geom"
 )
 
-func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
+func BresenhamLine(a, b geom.Pixel, put Brush) {
 	if a.X > b.X {
 		a, b = b, a
 	}
-	logrus.Debugf("drawing line: %v -> %v", a, b)
+	//logrus.Debugf("drawing line: %v -> %v", a, b)
 	dx := b.X - a.X
 	dy := b.Y - a.Y
 	if dy < 0 {
@@ -19,26 +17,26 @@ func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
 
 	switch {
 	case a == b: //point
-		putPixel(a)
+		put(a)
 	case dx == 0: //vertical
 		if a.Y > b.Y {
 			a, b = b, a
 		}
 		for ; a.Y <= b.Y; a.Y++ {
-			putPixel(a)
+			put(a)
 		}
 	case dy == 0: //horizontal
 		if a.X > b.X {
 			a, b = b, a
 		}
-		for ; a.X <= b.X; a.X++{
-			putPixel(a)
+		for ; a.X <= b.X; a.X++ {
+			put(a)
 		}
 	case dx > dy:
 		if a.Y < b.Y {
 			dy, e, slope := 2*dy, dx, 2*dx
 			for ; dx != 0; dx-- {
-				putPixel(a)
+				put(a)
 				a.X++
 				e -= dy
 				if e < 0 {
@@ -50,7 +48,7 @@ func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
 			// BresenhamDxXRYU(img, x1, y1, x2, y2, col)
 			dy, e, slope := 2*dy, dx, 2*dx
 			for ; dx != 0; dx-- {
-				putPixel(a)
+				put(a)
 				a.X++
 				e -= dy
 				if e < 0 {
@@ -59,12 +57,12 @@ func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
 				}
 			}
 		}
-		putPixel(b)
+		put(b)
 	case dy >= dx:
 		if a.Y < b.Y {
 			dx, e, slope := 2*dx, dy, 2*dy
 			for ; dy != 0; dy-- {
-				putPixel(a)
+				put(a)
 				a.Y++
 				e -= dx
 				if e < 0 {
@@ -76,7 +74,7 @@ func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
 			// BresenhamDyXRYU(img, x1, y1, x2, y2, col)
 			dx, e, slope := 2*dx, dy, 2*dy
 			for ; dy != 0; dy-- {
-				putPixel(a)
+				put(a)
 				a.Y--
 				e -= dx
 				if e < 0 {
@@ -85,7 +83,7 @@ func Bresenham(a, b geom.PixelPoint, putPixel func(point geom.PixelPoint)) {
 				}
 			}
 		}
-		putPixel(b)
+		put(b)
 
 	}
 }
