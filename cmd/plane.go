@@ -18,21 +18,15 @@ type Plane struct {
 	mode          goshape.Mode
 	size          fyne.Size
 	shapes        geom.ShapeSet
+	relationManagers []goshape.RelationsManager
 	selectedIndex int
 	HandleSelect  ui.SetActive
 }
 
-func (p *Plane) SetShapes(set geom.ShapeSet) {
-	p.shapes = set
-}
-
-func (p *Plane) GetSelectIndex() int {
-	return p.selectedIndex
-}
 
 var _ fyne.Widget = &Plane{}
 var _ goshape.ShapesProvider = &Plane{}
-var _ goshape.ShapeEditor = &Plane{}
+var _ goshape.ShapeProvider = &Plane{}
 
 func NewPlane(size fyne.Size) *Plane {
 	p := &Plane{
@@ -43,6 +37,10 @@ func NewPlane(size fyne.Size) *Plane {
 	p.mode = modes.NewCreateTriangle(p)
 	p.ExtendBaseWidget(p)
 	return p
+}
+
+func (p *Plane) GetSelectIndex() int {
+	return p.selectedIndex
 }
 
 func (p *Plane) Size() fyne.Size {
@@ -96,13 +94,16 @@ func (p *Plane) SetMode(mode goshape.Mode) {
 	p.mode = mode
 }
 
-func (p *Plane) GetShapes() geom.ShapeSet {
-	return p.shapes
+func (p *Plane) GetShapes() (geom.ShapeSet, []goshape.RelationsManager) {
+	return p.shapes, p.relationManagers
 }
 
-func (p *Plane) SetShape(set geom.Shape) {
-	p.shapes[p.selectedIndex] = set
+func (p *Plane) SetShapes(set geom.ShapeSet,rms []goshape.RelationsManager) {
+	p.shapes = set
+	p.relationManagers = rms
 }
+
+
 
 func (p *Plane) SelectShape(index int) {
 	if index < 0 || index >= len(p.shapes) {
@@ -116,7 +117,17 @@ func (p *Plane) UnselectShape() {
 	p.selectedIndex = -1
 	p.HandleSelect(false)
 }
+func (p *Plane) SetShape(shape geom.Shape, rm goshape.RelationsManager ) {
+	p.shapes[p.selectedIndex] = shape
+	p.relationManagers[p.selectedIndex] = rm
+}
+func (p *Plane) GetSelected() (geom.Shape, goshape.RelationsManager) {
+	return p.shapes[p.selectedIndex], p.relationManagers[p.selectedIndex]
+}
 
-func (p *Plane) GetSelected() geom.Shape {
-	return p.shapes[p.selectedIndex]
+func (p *Plane) Refresh(){
+	for i, manager := range p.relationManagers {
+		p.shapes[i] = manager.ApplyRelations(p.shapes[i])
+	}
+	p.BaseWidget.Refresh()
 }

@@ -21,3 +21,5 @@ func (v Vector) Length() float64 {
 func MoveByVec(pp, v Pixel) Pixel {
 	return Pixel{pp.X + v.X, pp.Y + v.Y}
 }
+
+var NanPoint = Point{math.NaN(), math.NaN()}

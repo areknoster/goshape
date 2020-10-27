@@ -5,6 +5,7 @@ import (
 
 	"goshape/pkg/geom"
 	"goshape/pkg/goshape"
+	"goshape/pkg/relation"
 )
 
 func NewShapesModesList(sc goshape.ShapesProvider) []goshape.Mode {
@@ -32,9 +33,11 @@ func (c CreateTriangle) Name() string {
 
 func (c CreateTriangle) HandleClick(normLoc geom.Point) {
 	const defaultTriangleEdge = 0.3
-	shapes := c.ShapesProvider.GetShapes()
-	shapes = append(shapes, geom.CenteredEquiTriangle(normLoc, defaultTriangleEdge))
-	c.SetShapes(shapes)
+	shapes, rms := c.GetShapes()
+	newShape := geom.CenteredEquiTriangle(normLoc, defaultTriangleEdge)
+	shapes = append(shapes, newShape)
+	rms = append(rms, relation.NewRelationsManager(newShape.Roll))
+	c.SetShapes(shapes,rms)
 }
 
 func (c CreateTriangle) HandleDrag(start geom.Point, move geom.Vector) {}
@@ -56,7 +59,8 @@ func (s SelectShape) Name() string {
 }
 
 func (s SelectShape) HandleClick(normLoc geom.Point) {
-	c := s.GetShapes().ClosestToShape(normLoc)
+	shapes, _ := s.GetShapes()
+	c := shapes.ClosestToShape(normLoc)
 	if c < 0 {
 		s.UnselectShape()
 		return
@@ -83,7 +87,7 @@ func (d DeleteShape) Name() string {
 }
 
 func (d DeleteShape) HandleClick(normLoc geom.Point) {
-	shapes := d.GetShapes()
+	shapes, rms := d.GetShapes()
 	clicked := shapes.ClosestToShape(normLoc)
 	switch {
 	case clicked == -1:
@@ -97,7 +101,8 @@ func (d DeleteShape) HandleClick(normLoc geom.Point) {
 		logrus.Debugf("deleting shape with index: %d", clicked)
 	}
 	shapes = append(shapes[0:clicked], shapes[clicked+1:]...)
-	d.SetShapes(shapes)
+	rms = append(rms[:clicked], rms[clicked+1:]...)
+	d.SetShapes(shapes, rms)
 }
 
 func (d DeleteShape) HandleDrag(start geom.Point, move geom.Vector) {}

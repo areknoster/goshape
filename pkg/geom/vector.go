@@ -56,3 +56,7 @@ func ClosestPoint(P, A, B Point) Point {
 func (v Vector) TimesScalar(s float64) Vector{
 	return Vector{s * v.X, s* v.Y}
 }
+
+func (v Vector)Add(va Vector) Vector{
+	return Vector{v.X + va.X, v.Y+ va.Y}
+}

@@ -7,6 +7,9 @@ import (
 type Shape struct {
 	Vertices []Point
 }
+func (s Shape) Roll(index int) int{
+	return index % len(s.Vertices)
+}
 
 type ShapeSet []Shape
 

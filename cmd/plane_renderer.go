@@ -56,9 +56,11 @@ func (p *PlaneRenderer) draw(w, h int) image.Image {
 		if i != p.plane.selectedIndex{
 			logrus.Debug("rendering common shape")
 			render.RenderCommonShape(shape, img, p.theme)
+			p.plane.relationManagers[i].Draw(img, shape)
 		}else {
 			logrus.Debug("rendering selected shape")
 			render.RenderSelectedShape(shape, img, p.theme)
+			p.plane.relationManagers[i].Draw(img, shape)
 		}
 	}
 	return img

@@ -5,20 +5,23 @@ import (
 )
 
 type ShapesProvider interface {
-	GetShapes() geom.ShapeSet
-	SetShapes(geom.ShapeSet)
+	GetShapes() (geom.ShapeSet, []RelationsManager)
+	SetShapes(geom.ShapeSet, []RelationsManager)
+
 	SelectShape(int)
 	GetSelectIndex() int
-	SetMode(Mode)
 	UnselectShape()
+
+	SetMode(Mode)
 }
 
-type ShapeEditor interface {
-	SetShape(geom.Shape)
-	GetSelected() geom.Shape
+type ShapeProvider interface {
+	SetShape(geom.Shape, RelationsManager)
+	GetSelected() (geom.Shape, RelationsManager)
+
 }
 
 type PlaneProvider interface {
-	ShapeEditor
+	ShapeProvider
 	ShapesProvider
 }
